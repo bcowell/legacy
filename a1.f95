@@ -224,10 +224,12 @@ contains
 				end select
 			end if
 
-			do i = 1, 12
-				print *, maze(:,i)
-			end do
-			print *, ' '
+			! Uncomment to see each step of the algorithm
+			! Change 12 to rows of maze
+			!do i = 1, 12
+			!	print *, maze(:,i)
+			!end do
+			!print *, ' '
 			
 		end do
 		
@@ -248,7 +250,7 @@ Program mazeSolver
 	! Brayden Cowell - 0844864
 	! Jan. 12, 2016 
 	! Maze Traversal Fortran Program
-	! wall='*', space='.', start='o', finish='e'
+	! wall='*', space='.', start='o', finish='e', path='#', backtracked='@'
 	Use data_struct
 	implicit none
 	
@@ -261,6 +263,8 @@ Program mazeSolver
 	integer :: x,y
 	
 	! Prompt user for filename (ex. maze.txt)
+	print *, 'Welcome to my maze solver! - bcowell(0844864)'
+	print *, 'Walls = *, space = ., start = o, finish = e, path = #, backtracked = @'
 	write(*,*) 'Enter filename of the maze:'
 	read (*,*) filename
 	! Make sure file exists
