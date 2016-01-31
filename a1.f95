@@ -1,3 +1,8 @@
+! Brayden Cowell - 0844864
+! Jan. 24, 2016 
+! Custom Stack Module
+! Uses allocatable 1-D character arrays
+! Keeps track of pathing for solving and directions for backtracking
 module data_struct
 
 	implicit none
@@ -55,7 +60,7 @@ contains
 			S%direction(k) = dir
 		end if
 		
-		! Add the new character to the back
+		! Push the new character to the back
 		S%c(S%n) = item
 		
 		
@@ -245,12 +250,11 @@ contains
 	End subroutine solve
 End module data_struct
 
-
+! Brayden Cowell - 0844864
+! Jan. 12, 2016 
+! Maze Traversal Fortran Program
+! wall='*', space='.', start='o', finish='e', path='#', backtracked='@'
 Program mazeSolver
-	! Brayden Cowell - 0844864
-	! Jan. 12, 2016 
-	! Maze Traversal Fortran Program
-	! wall='*', space='.', start='o', finish='e', path='#', backtracked='@'
 	Use data_struct
 	implicit none
 	
@@ -261,66 +265,72 @@ Program mazeSolver
 	character (len = 30) :: tempStr
 	character :: tempChar
 	integer :: x,y
+	logical :: fileFound
 	
 	! Prompt user for filename (ex. maze.txt)
 	print *, 'Welcome to my maze solver! - bcowell(0844864)'
 	print *, 'Walls = *, space = ., start = o, finish = e, path = #, backtracked = @'
 	write(*,*) 'Enter filename of the maze:'
 	read (*,*) filename
+	
 	! Make sure file exists
+	fileFound = .FALSE.
 	inquire(file=filename, exist=file_exits) 
 	if (file_exits) then 
 		open(99,file=filename, status='OLD', action='READ')
 		write (*,*) 'Reading File..'
+		fileFound = .TRUE.
 	else 
 		write (*,*) 'Error - Cannot open file!'
 	end if
 	
-	! Get the dimensions of the maze
-	read (99,*) col, row
-	write (*,*) 'Maze dimensions are:', row,col
-	
-	! Allocate the maze, then fill it with blanks
-	allocate(maze(row,col))
-	maze = '*'
-	
-	! Copy the maze from file into the maze array
-	do i = 1, row
-		! Read in each string-line from the file
-		read (99,*) tempStr
-		do j = 1, col
-			! Seperate each char from the string
-			tempChar = tempStr(j:j)
-			! Insert each char into the matrix at pos(x,y)
-			maze(j,i) = tempChar
-			! Find startPos
-			If (tempChar == 'o') then
-				x = i
-				y = j
-			end if
+	if (fileFound) then
+		! Get the dimensions of the maze
+		read (99,*) col, row
+		write (*,*) 'Maze dimensions are:', row,col
+		
+		! Allocate the maze, then fill it with blanks
+		allocate(maze(row,col))
+		maze = '*'
+		
+		! Copy the maze from file into the maze array
+		do i = 1, row
+			! Read in each string-line from the file
+			read (99,*) tempStr
+			do j = 1, col
+				! Seperate each char from the string
+				tempChar = tempStr(j:j)
+				! Insert each char into the matrix at pos(x,y)
+				maze(j,i) = tempChar
+				! Find startPos
+				If (tempChar == 'o') then
+					x = i
+					y = j
+				end if
+			end do
 		end do
-	end do
 
-	! Close the file
-	close(99, status='KEEP')
-	
-	print *, 'Unsolved Maze:'
-	
-	! Print the original maze
-	do i = 1, row
-		print *, maze(:,i)
-	end do
-	
-	print *, ' '
-	
-	! Call the subroutine in the module to solve the maze
-	Call solve(maze, x, y)
-	
-	! Print the completed maze
-	do i = 1, row
-		print *, maze(:,i)
-	end do
-	
-	deallocate(maze)
-	
+		! Close the file
+		close(99, status='KEEP')
+		
+		print *, 'Unsolved Maze:'
+		
+		! Print the original maze
+		do i = 1, row
+			print *, maze(:,i)
+		end do
+		
+		print *, ' '
+		
+		! Call the subroutine in the module to solve the maze
+		Call solve(maze, x, y)
+		
+		! Print the completed maze
+		do i = 1, row
+			print *, maze(:,i)
+		end do
+		
+		deallocate(maze)
+	end if
+
 End Program mazeSolver
