@@ -7,73 +7,73 @@ package body header is
 
 	-- Solve
 	-- Start at the top-left grid and assign a possible value to a square.
-	procedure solve(puzzle : in out puzzle_type) is
-		solved : Boolean := FALSE;
-		
-		-- Try all possible values for given cell and continue with next cell.
-		procedure brute_force(x : in num_range; y : in num_range) is
-			nx : num_range := x;
-			ny : num_range := y;
-			last : Boolean := FALSE;
-		begin
-			-- determine if this is the last cell or else the next cell coordinates
-			if (x = puzzle'Last(1) and then y = puzzle'Last(2)) then
-				Last := True;
-			elsif x = puzzle'Last(1) then
-				nx := puzzle'First (1);
-				ny := y + 1;
-			else
-				nx := x + 1;
-			end if;
-			
-			-- only need to try values for nonvalid cell entries (0)
-			if (puzzle(x,y) = 0) then
-				-- try all possible values
-				for k in 1..9 loop
-					puzzle(x,y) := k;
-			   
-					if (puzzle_checked(puzzle)) then
-						-- the last cell was processed and lead to a valid sudoku
-						-- this means all cells have valid entries -> solved.
-						if Last then
-							Solved := True;
-							return;
-						else
-							-- try next cells
-							brute_force(nx,ny);
-							-- if we have a solved sudoku, exit procedure.
-							if Solved then
-								return;
-							end if;
-						end if;
-					end if;
-			   
-				-- reset the cell, it will be tried later again
-				puzzle(x,y) := 0;
-				end loop;
-			
-			elsif Last then
-				-- last cell, already valid, it is solved and there is nothing to do
-				Solved := True;
-			else
-				-- this cell already has a value, continue to next
-				brute_force(nx,ny);
-			end if;
-		end brute_force;
-		
+	procedure solve(puzzle : in out puzzle_type; possibles : in out puzzle_array_type; x : in out Integer; y : in out Integer) is
+		test : Boolean := FALSE;
+		solved : Boolean;
+		temp_array : array_type;
+		n : Integer;
 	begin
-		-- only accept valid puzzle inputs
-		--if not puzzle_checked(puzzle) then
-			--raise Constraint_Error;
-		--end if;
-		
-		-- start with first cell
-		brute_force(puzzle'First(1),puzzle'First(1));
-		-- tried all combinations without success -> unsolvable.
-		
-		if not Solved then
-			put_line("The puzzle is unsolvable!");
-			new_line;
+		-- If square at position is empty
+		if (puzzle(x,y) = 0) then
+			-- Loop through the possible values of the square
+			temp_array := possibles(x,y);
+			n := 0;
+			for k in 1..9 loop
+				if (temp_array(k) /= 0) then
+					-- Test the value
+					test := puzzle_checked(puzzle);
+					if (test = TRUE) then
+						-- Fill in the number
+						puzzle(x,y) := temp_array(k);
+						-- It is no longer possible
+						temp_array(k) := 0;
+						possibles(x,y) := temp_array;
+
+						-- Advance to next position
+						if (x = 9) then
+							x := 0;
+							y := y + 1;
+						else
+							x := x + 1;
+						end if;
+						solve(puzzle, possibles, x, y);
+					else -- if test fails
+						-- Discare the possiblility
+						temp_array(k) := 0;
+						possibles(x,y) := temp_array;
+						-- if there are no more possible values
+							-- BACKTRACK
+					end if;	
+					n := n + 1;				
+				end if;
+			end loop;
+			if (n = 0) then
+				-- No more possible values left
+				-- BACKTRACK
+				put_line("Backtrack!");
+			end if;
+		else -- Square is already filled
+			-- check if the puzzle is solved
+			solved := TRUE;
+			for i in 1..9 loop
+				for j in 1..9 loop
+					if (puzzle(i,j) = 0) then
+						solved := FALSE;
+					end if;
+				end loop;
+			end loop;
+			if (solved = TRUE) then 
+				put_line("FINISHED");
+			else
+				-- move to next square and call solve
+				if (x = 9) then
+					x := 0;
+					y := y + 1;
+				else
+					x := x + 1;
+				end if;
+				solve (puzzle, possibles, x, y);
+			end if;
 		end if;
 	end Solve;
 
@@ -135,17 +135,19 @@ package body header is
 	end grid_checked;
 
 	-- Puzzle_checked
-	-- Go through a 3x3 grid and see if its "solved" (i.e. One value filled in each square).
-	-- Make sure there's only one element in the array of possibilites of each point
-	-- Returns TRUE on solved, FALSE otherwise
+	-- Go through the entire puzzle and see if each square is valid.
+	-- Returns TRUE if the puzzle is valid, FALSE otherwise
 	function puzzle_checked (puzzle : in puzzle_type) return Boolean is
 		temp_value : Integer; 
-		solved : Boolean := FALSE;
+		solved : Boolean := TRUE;
 	begin
+		solved := grid_checked(puzzle);
 		for i in 1..9 loop
 			for j in 1..9 loop
 				temp_value := puzzle(i,j);
-				solved := check(temp_value, puzzle, i, j);
+				if (temp_value /= 0) then
+					solved := check(temp_value, puzzle, i, j);
+				end if;
 			end loop;
 		end loop;
 		return solved;
@@ -173,11 +175,6 @@ package body header is
 				return FALSE;
 			end if;
 		end loop;
-		
-		valid := grid_checked (puzzle);
-		if (valid = FALSE) then
-			return FALSE;
-		end if;
 		
         return TRUE;
     end check;

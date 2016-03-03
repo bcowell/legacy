@@ -5,7 +5,7 @@ package header is
 	type puzzle_array_type is array (1..9, 1..9) of array_type; -- Create a 3x3 grid able to store an array of 9 possibilites
 	type grid_type is array (1..3, 1..3) of Integer;
 
-	procedure solve (puzzle : in out puzzle_type);
+	procedure solve (puzzle : in out puzzle_type; possibles : in out puzzle_array_type; x : in out Integer; y : in out Integer);
 	function grid_checked (puzzle : in puzzle_type) return Boolean;
 	function puzzle_checked (puzzle : in puzzle_type) return Boolean;
 	function check (num : in Integer; puzzle : in puzzle_type; posX : in Integer; posY : in Integer) return Boolean;

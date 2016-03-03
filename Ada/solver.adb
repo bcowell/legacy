@@ -76,7 +76,7 @@ procedure Solver is
 	-- Go through each grid 
 	-- Calculate possibilites
 	loop
-		for b in 1..9 loop
+		for b in 1..20 loop
 			for i in 1..3 loop
 				for j in 1..3 loop
 					temp_grid(i,j) := temp_puzzle(x+i, y+j);
@@ -118,18 +118,18 @@ procedure Solver is
 				 -- If we have no value given, narrow its possibilites.
 					if (temp_grid(i,j) = 0) then
 						for k in 1..9 loop
-							puzzle_conflict := FALSE;
+							puzzle_conflict := TRUE;
 							if (values(k) /= 0) then
 								puzzle_conflict := check(values(k), temp_puzzle, x+i, y+j);
-								-- Also check for numbers of the same value in the current grid.
-								for u in 1..3 loop
+								-- Also check for numbers of the same value in the current grid
+								for c in 1..3 loop
 									for d in 1..3 loop
-										if (values(k) = temp_grid(u,d)) then
-											puzzle_conflict := TRUE;
+										if (values(k) = temp_grid(c,d)) then
+											puzzle_conflict := FALSE;
 										end if;
 									end loop;
 								end loop;
-								if (puzzle_conflict = TRUE) then
+								if (puzzle_conflict = FALSE) then
 									values(k) := 0;
 								end if;
 							end if;
@@ -213,20 +213,34 @@ procedure Solver is
 		exit when (x = 9 and y = 9);
 	end loop;
 	
-	puzzle := temp_puzzle;
-	
-	-- Print puzzle and possibilites
-	put_line("Puzzle: ");
-	print_board(temp_puzzle);
+	print_board(puzzle);
 	new_line;
-	
+	puzzle := temp_puzzle;
+
+	for i in 1..9 loop
+		for j in 1..9 loop
+			temp_array := possibles(i,j);
+			for k in 1..9 loop
+				put(temp_array(k));
+			end loop;
+			new_line;
+		end loop;
+		new_line;
+		new_line;
+	end loop;
+
+	x := 1;
+	y := 1;		
+
 	temp_puzzle := puzzle; -- Copy original
 	-- Start from top left grid (nx = 1, ny = 1)
-	solve(temp_puzzle);
+	solve(temp_puzzle, possibles, x, y);
 	
 	-- Print it out the solved puzzle.
 	put_line("Solved Puzzle: ");
 	print_board(temp_puzzle);
-	new_line;		
+	new_line;
+
+	-- Output solved puzzle to file.		
 
 end Solver;
