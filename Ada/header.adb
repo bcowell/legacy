@@ -55,8 +55,8 @@ package body header is
 		for i in 1..9 loop
 			-- If the number at position doesn't cause an error.
 			if (check(current, i)) then
-				put_line("Insert " & integer'image(i) & " at " & integer'image(current.row) & integer'image(current.col));
-				new_line;
+				-- put_line("Insert " & integer'image(i) & " at " & integer'image(current.row) & integer'image(current.col));
+				-- new_line;
 				temp_puzzle(current.row, current.col) := i; -- Fill the number in.
 				-- Recursively call until the puzzle is solved.
 				if (Insert(next_pos(current))) then
@@ -79,35 +79,15 @@ package body header is
 		x, y : Integer := 0;
 	begin
 		-- Look through the 3x3 grid
-		while ((x /= 9) and (y /= 9)) loop
-				if (num = temp_puzzle(current.row +x, current.col +y)) then
-					return FALSE;
-				end if;
-
-				if ((x = 0) and (y = 0)) then
-					x := 3;
-				elsif ((x = 3) and (y = 0)) then
-					x := 6;
-				elsif ((x = 6) and (y = 0)) then
-					x := 0;
-					y := 3;
-				elsif ((x = 0) and (y = 3)) then
-					x := 3;
-				elsif ((x = 3) and (y = 3)) then
-					x := 6;
-				elsif ((x = 6) and (y = 3)) then
-					x := 0;
-					y := 6;
-				elsif ((x = 0) and (y = 6)) then
-					x := 3;
-				elsif ((x = 3) and (y = 6)) then
-					x := 6;
-				else
-					x := 9;
-					y := 9;
-				end if;
-		end loop;
-			
+			x := ((current.row - 1) / 3) * 3;
+			y := ((current.col - 1) / 3) * 3;
+			for i in 1..3 loop
+				for j in 1..3 loop
+					if (num = temp_puzzle(x+i, y+j)) then
+						return FALSE;
+					end if;
+				end loop;
+			end loop;			
 
 		-- Go through rows and check for same number
  		for i in 1..9 loop
@@ -155,6 +135,7 @@ package body header is
 		current.row := 1; current.col := 1; -- Start at the very top-left.
 		
 		finished := insert(current);
+		puzzle := temp_puzzle;
 	end solve;
 	--------------------------------------------------------------------
 

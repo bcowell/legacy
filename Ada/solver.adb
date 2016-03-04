@@ -12,9 +12,9 @@ procedure Solver is
 	
 	x, y : Integer;
 	
-	filename: string(1..50);
-	last: natural;
-	input_file : File_Type;
+	filename_in, filename_out: string(1..50);
+	last1, last2: natural;
+	input_file, output_file : File_Type;
 	line : String(1..81);
 	temp_line : String (1..9);
 	
@@ -23,8 +23,11 @@ procedure Solver is
 	
 	-- Read unsolved puzzle from file.
 	put_line("Enter an input filename:");
-	get_line(filename,last);
-	open(input_file, in_file, filename(1..last));
+	get_line(filename_in,last1);
+	put_line("And enter an output filename:");
+	get_line(filename_out, last2);
+
+	open(input_file, in_file, filename_in(1..last1));
 	
 	while not End_OF_File (Input_File) loop
 		-- Read the puzzle in as a string.
@@ -60,6 +63,11 @@ procedure Solver is
 	print_board(puzzle);
 	new_line;
 
-	-- Output solved puzzle to file.		
-
+	-- Output solved puzzle to file.			
+	Create (output_File, Out_File, filename_out);
+	
+	Set_Output(output_File);
+	print_board(puzzle);
+	Close (output_file); 
+	Set_Output(Standard_Output);
 end Solver;
