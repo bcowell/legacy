@@ -2,7 +2,6 @@
 -- Feb. 19, 2016 
 -- Sudoku Solver implemented in Ada
 
-with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 with Ada.Text_IO; use Ada.Text_IO;
 with header; use header;
 
@@ -13,7 +12,6 @@ procedure Solver is
 	x, y : Integer;
 	
 	finished : Boolean := FALSE;
-
 	filename_in, filename_out: string(1..50);
 	last1, last2: natural;
 	input_file, output_file : File_Type;
@@ -24,13 +22,20 @@ procedure Solver is
 	begin
 	
 	-- Read unsolved puzzle from file.
-	put_line("Enter an input filename:");
-	get_line(filename_in,last1);
-	put_line("And enter an output filename:");
-	get_line(filename_out, last2);
-
-	open(input_file, in_file, filename_in(1..last1));
-	
+	loop
+		begin
+			put_line("Enter an input filename:");
+			get_line(filename_in,last1);
+			put_line("And enter an output filename:");
+			get_line(filename_out, last2);
+		
+			open(input_file, in_file, filename_in(1..last1));
+			
+			exit;
+		exception
+			when Name_Error => put_line("Invalid filename!");
+		end;
+	end loop;
 	while not End_OF_File (Input_File) loop
 		-- Read the puzzle in as a string.
 		Get(Input_File, line);
@@ -60,7 +65,7 @@ procedure Solver is
 	-- Brute force the puzzle.
 	solve(puzzle, finished);
 	
-	if (finished = TRUE) then
+	if (finished) then
 		-- Print it out the solved puzzle.
 		put_line("Solved Puzzle: ");
 		print_board(puzzle);

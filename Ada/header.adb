@@ -1,5 +1,4 @@
-with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
-with Ada.Text_IO; use Ada.Text_IO;
+With Ada.Text_IO; use Ada.Text_IO;
 
 package body header is
 
