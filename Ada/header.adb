@@ -1,7 +1,11 @@
 with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 with Ada.Text_IO; use Ada.Text_IO;
+
 package body header is
+
+	temp_puzzle : puzzle_type;
 	
+	--------------------------------------------------------------------
 	-- Print the puzzle in specified format
 	procedure Print_Board (puzzle : in puzzle_type) is
     begin
@@ -27,8 +31,131 @@ package body header is
 		
 		put ("-------------------------------");
 		new_line;
+	end Print_Board;
+	--------------------------------------------------------------------
+	
+	
+	--------------------------------------------------------------------
+	-- Brute-Force insertion of empty squares until finished.
+	function Insert (current : pos_t) return Boolean is
+	begin
+	
+		-- Check if were done puzzle
+		if ((current.row > 9) or (current.col > 9)) then
+			return TRUE;
+		end if;
 		
-   end Print_Board;
+		-- If the number is already filled, move to the next.
+		if (temp_puzzle(current.row, current.col) /= 0) then
+			-- Recall with the next position.
+			return (Insert(next_pos(current)));
+		end if;
+	
+		-- Brute force
+		for i in 1..9 loop
+			-- If the number at position doesn't cause an error.
+			if (check(current, i)) then
+				put_line("Insert " & integer'image(i) & " at " & integer'image(current.row) & integer'image(current.col));
+				new_line;
+				temp_puzzle(current.row, current.col) := i; -- Fill the number in.
+				-- Recursively call until the puzzle is solved.
+				if (Insert(next_pos(current))) then
+					return TRUE;
+				end if;
+			end if;
+		end loop;
+		
+		temp_puzzle(current.row, current.col) := 0;
+		return FALSE;	
+	end Insert;
+	--------------------------------------------------------------------
+
+	
+	--------------------------------------------------------------------
+	-- Check
+	-- Look for conflicts in either the current 3x3 or in the same col/row 
+	-- return FALSE on conflict, otherwise return TRUE
+	function check (current : pos_t; num : Integer) return Boolean is
+		x, y : Integer := 0;
+	begin
+		-- Look through the 3x3 grid
+		while ((x /= 9) and (y /= 9)) loop
+				if (num = temp_puzzle(current.row +x, current.col +y)) then
+					return FALSE;
+				end if;
+
+				if ((x = 0) and (y = 0)) then
+					x := 3;
+				elsif ((x = 3) and (y = 0)) then
+					x := 6;
+				elsif ((x = 6) and (y = 0)) then
+					x := 0;
+					y := 3;
+				elsif ((x = 0) and (y = 3)) then
+					x := 3;
+				elsif ((x = 3) and (y = 3)) then
+					x := 6;
+				elsif ((x = 6) and (y = 3)) then
+					x := 0;
+					y := 6;
+				elsif ((x = 0) and (y = 6)) then
+					x := 3;
+				elsif ((x = 3) and (y = 6)) then
+					x := 6;
+				else
+					x := 9;
+					y := 9;
+				end if;
+		end loop;
+			
+
+		-- Go through rows and check for same number
+ 		for i in 1..9 loop
+ 			if (num = temp_puzzle(i, current.col)) then
+				return FALSE;
+ 			end if;
+ 		end loop;
+ 		
+ 		-- Go through cols and check for same number 
+ 		for j in 1..9 loop
+ 			if (num = temp_puzzle(current.row, j)) then
+				return FALSE;
+ 			end if;
+ 		end loop;
+ 		
+ 		return TRUE;
+	end check;
+	--------------------------------------------------------------------
 	
 	
+	--------------------------------------------------------------------
+	-- Move to the next square in the puzzle.
+	function Next_Pos (current : pos_t) return pos_t is
+		next : pos_t := current;
+	begin
+		-- Move to next square in the same row
+		if next.Row < 9 then
+			next.Row := next.Row + 1;
+		else -- If we are at the end of the row, move to the first row of the next col.
+			next.Row := 1;
+			next.Col := next.Col + 1;
+		end if;
+		return next;
+	end Next_Pos;
+	--------------------------------------------------------------------
+
+	
+	--------------------------------------------------------------------
+	-- Start the brute-force, every insert() calls check before placing the correct number into the puzzle.
+	procedure solve (puzzle : in out puzzle_type) is
+		current : pos_t;
+		finished : Boolean;
+	begin
+		temp_puzzle := puzzle; -- Make a duplicate copy of the puzzle
+		current.row := 1; current.col := 1; -- Start at the very top-left.
+		
+		finished := insert(current);
+	end solve;
+	--------------------------------------------------------------------
+
 end header;

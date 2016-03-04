@@ -6,10 +6,8 @@ with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 with Ada.Text_IO; use Ada.Text_IO;
 with header; use header;
 
-
 procedure Solver is
 
-	temp_puzzle : puzzle_type;
 	puzzle : puzzle_type;
 	
 	x, y : Integer;
@@ -35,14 +33,12 @@ procedure Solver is
 		
 		x := 1;
 		y := 9;
-		-- Seperate the whole string into 9 character stings
+		-- Seperate the whole file into 9 character strings
 		for i in 1..9 loop
-			--put_line(line((x)..(y)));
 			temp_line := line(x..y);
 			-- Now seperate the 9-char strings into individual chars
 			for j in 1..9 loop
 				-- And assign each number to its possition in the 9x9 puzzle.
-				-- put(character'Pos(temp_line(j)) - 48);
 				puzzle(i,j) := character'Pos(temp_line(j)) - 48; -- It's ASCII so subtract the code for 0 (48).
 			end loop;
 			x := x + 9;
@@ -51,18 +47,17 @@ procedure Solver is
 	end loop;
 	close(input_file); 
 	
-	temp_puzzle := puzzle;
-	
 	-- Print it out the unsolved puzzle.
 	put_line("Unsolved Puzzle: ");
 	print_board(puzzle);
 	new_line;
 
 	-- Brute force the puzzle.
+	solve(puzzle);
 	
 	-- Print it out the solved puzzle.
 	put_line("Solved Puzzle: ");
-	print_board(temp_puzzle);
+	print_board(puzzle);
 	new_line;
 
 	-- Output solved puzzle to file.		
