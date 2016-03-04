@@ -127,9 +127,8 @@ package body header is
 	
 	--------------------------------------------------------------------
 	-- Start the brute-force, every insert() calls check before placing the correct number into the puzzle.
-	procedure solve (puzzle : in out puzzle_type) is
+	procedure solve (puzzle : in out puzzle_type; finished : in out Boolean) is
 		current : pos_t;
-		finished : Boolean;
 	begin
 		temp_puzzle := puzzle; -- Make a duplicate copy of the puzzle
 		current.row := 1; current.col := 1; -- Start at the very top-left.

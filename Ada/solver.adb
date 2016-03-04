@@ -12,6 +12,8 @@ procedure Solver is
 	
 	x, y : Integer;
 	
+	finished : Boolean := FALSE;
+
 	filename_in, filename_out: string(1..50);
 	last1, last2: natural;
 	input_file, output_file : File_Type;
@@ -56,18 +58,22 @@ procedure Solver is
 	new_line;
 
 	-- Brute force the puzzle.
-	solve(puzzle);
+	solve(puzzle, finished);
 	
-	-- Print it out the solved puzzle.
-	put_line("Solved Puzzle: ");
-	print_board(puzzle);
-	new_line;
+	if (finished = TRUE) then
+		-- Print it out the solved puzzle.
+		put_line("Solved Puzzle: ");
+		print_board(puzzle);
+		new_line;
 
-	-- Output solved puzzle to file.			
-	Create (output_File, Out_File, filename_out);
+		-- Output solved puzzle to file.			
+		Create (output_File, Out_File, filename_out);
 	
-	Set_Output(output_File);
-	print_board(puzzle);
-	Close (output_file); 
-	Set_Output(Standard_Output);
+		Set_Output(output_File);
+		print_board(puzzle);
+		Close (output_file); 
+		Set_Output(Standard_Output);
+	else
+		put_line("Sudoku puzzle has no solution! Did not print output to file!");
+	end if;
 end Solver;

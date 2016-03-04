@@ -11,6 +11,6 @@ package header is
 	function Insert (current : pos_t) return Boolean;
 	function check (current : pos_t; num : Integer) return Boolean;
 	function Next_Pos (current : pos_t) return pos_t;
-	procedure solve (puzzle : in out puzzle_type);
+	procedure solve (puzzle : in out puzzle_type; finished : in out Boolean);
 	
 end header;
