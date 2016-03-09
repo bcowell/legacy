@@ -25,14 +25,19 @@ init-table.
 		inspect temp-str
 		converting "abcdefghijklmnopqrstuvwxyz" to "bcdefghijklmnopqrstuvwxyza"
 
-		display "Row is " temp-str
 		move temp-str to row(i)
 		Add 1 to i
 	end-perform.
 main.
 	accept user-input from console.
+	
+	inspect user-input converting spaces to "*".	
+
 	display "User input " user-input.
 
-	CALL 'ENCODE' using user-input, BY CONTENT alphabet-record.
+	CALL 'ENCRYPT' using user-input, BY CONTENT alphabet-record.
+	display "Encrypted " user-input.	
 
+	Call 'DECRYPT' using user-input, BY CONTENT alphabet-record.
+	display "Decrypted " user-input.
 STOP RUN.
