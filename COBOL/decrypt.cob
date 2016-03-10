@@ -19,15 +19,21 @@ DATA DIVISION.
                         05 alpha pic X occurs 26 times.
 
 PROCEDURE DIVISION USING input-text, alphabet-record.
+*> Opposite of encode.
+*> Use the encrypted characters position in the cipher table to find what it decodes to.
 Decode.
 	move 1 to num.
+	
+	*> Go through each row of shifted letters.
 	if pos is not equal to 26 then
 		move function mod(pos,26) to pos
 	end-if.
 
+	*> Count how many characters are infront of the letter in the cipher-table row.
 	inspect row(pos) tallying num for characters before temp-char.
 	add 1 to num.
 
+	*> Replace the letter with whatever position the encrypted letter is at.
 	evaluate num
 		when 1 move "a" to temp-char
 		when 2 move "b" to temp-char
@@ -59,13 +65,13 @@ Decode.
 		
 	add 1 to pos.
 
+*> Read each character one at a time calling decode for the string.
 Main.
         move 1 to i.
 
         perform until i > 1000
                 if input-text(i:1) is alphabetic then
                         move input-text(i:1) to temp-char
-                        display "Temp " temp-char
                         perform Decode
                         move temp-char to input-text(i:1)
                 end-if

@@ -1,6 +1,7 @@
 *> Brayden Cowell - 0844864
 *> Monday, Mar. 7th, 2016
 *> Trimethius Cipher.
+*> Main "Function"
 
 IDENTIFICATION DIVISION.
 PROGRAM-ID. MAIN.
@@ -20,6 +21,7 @@ DATA DIVISION.
 	01 user-input pic x(1000).
 	
 PROCEDURE DIVISION.
+*> Create a table of each shifted alphabet.
 init-table.
 	*> Initialize the first row.
 	move "abcdefghijklmnopqrstuvwxyz" to row(1).
@@ -36,6 +38,8 @@ init-table.
 		move temp-str to row(i)
 		Add 1 to i
 	end-perform.
+	
+*> Read in user input, encrypt, decrypt, and display output.
 main.
 	*> Read the paragraph to encode from a file.
 	accept user-input from console.

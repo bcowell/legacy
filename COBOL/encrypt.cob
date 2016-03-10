@@ -1,12 +1,18 @@
+*> Brayden Cowell - 0844864
+*> Monday, Mar. 7th, 2016
+*> Trimethius Cipher.
+*> Encrypt "Function"
+
 IDENTIFICATION DIVISION.
 PROGRAM-ID. ENCRYPT.
 
 DATA DIVISION.
 	WORKING-STORAGE SECTION.
+	*> Loop iterators
 	01 i pic 9999 value 1.
 	01 j pic 99 value 1.
 
-	01 pos pic 9999 value 0.
+	01 pos pic 99 value 0.
 	01 num pic 99 value 1.
 
 	01 temp-char pic X.
@@ -19,12 +25,16 @@ DATA DIVISION.
                         05 alpha pic X occurs 26 times.
 
 PROCEDURE DIVISION USING input-text, alphabet-record.
+
+*> Use the characters position in the input-string to find what it encodes to in the cipher-table.
 Encode.
 	move 1 to num.
+	*> Go through each row of shifted letters.
 	if pos is not equal to 26 then
 		move function mod(pos,26) to pos
 	end-if.
 
+	*> Find the position of the letter to replace it with.
 	evaluate temp-char
 		when "a" move 1 to num
 		when "b" move 2 to num
@@ -53,11 +63,12 @@ Encode.
 		when "y" move 25 to num
 		when "z" move 26 to num
 	end-evaluate.
-		
+	
 	move alpha(pos,num) to temp-char.
 	
 	add 1 to pos.
 
+*> Read each character one at a time calling encode for the string.
 Main.
 	move 1 to i.
 	
