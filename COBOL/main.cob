@@ -6,8 +6,20 @@
 IDENTIFICATION DIVISION.
 PROGRAM-ID. MAIN.
 
+ENVIRONMENT DIVISION.
+INPUT-OUTPUT SECTION.
+FILE-CONTROL.
+	select file-name assign to dynamic user-input.
+
 DATA DIVISION.
-	WORKING-STORAGE SECTION.
+FILE SECTION.
+	FD file-name.
+	01 in-str	pic x(1000).
+
+WORKING-STORAGE SECTION.
+	*> File stuff.
+	01 file-status	pic 99.
+
 	*> Loop iterators
 	01 i 	pic 99	value 2.
 	01 j	pic 99	value 1.
@@ -18,14 +30,14 @@ DATA DIVISION.
 			05 alpha	pic X	occurs 26 times.
 
 	01 temp-str		pic x(26)	value spaces.
-	01 user-input 	pic x(1000).
+	01 user-input 		pic x(1000).
 	01 str-size 		pic 9999.
 	
 	*> Variables for removing spaces.
-	01 VOUT     PIC X(1000).
-	01 VWORK    PIC X(1000).
-	01 VTEMP    PIC X(1000).
-	01 p1 		pic 9999.
+	01 VOUT     	PIC X(1000).
+	01 VWORK    	PIC X(1000).
+	01 VTEMP	PIC X(1000).
+	01 p1		pic 9999.
 	01 p2		pic 9999.
 
 	
@@ -73,8 +85,20 @@ UNSTRING1.
 *> Read in user input, encrypt, decrypt, and display output.
 main.
 	*> Read the paragraph to encode from a file.
+	Display "Enter an input filename."
+
 	accept user-input from console.
 	
+	open input file-name.
+
+	read file-name 
+		into in-str
+	end-read.
+
+	display in-str.
+
+	close file-name.
+
 	*> Trim the spaces.
 	move user-input to vwork.
 	perform unstring1.
