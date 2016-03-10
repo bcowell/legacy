@@ -84,6 +84,9 @@ main.
 	delimited by all spaces
 	into user-input count in str-size.
 	
+	*> Change any Upper-case letters to lower-case.
+	inspect user-input converting "ABCDEFGHIJKLMNOPQRSTUVWXYZ" to "abcdefghijklmnopqrstuvwxyz".
+	
 	*> Now we can call encrypt/decrypt with the properly sized string.
 	display "User input " user-input(1:str-size).
 
@@ -94,7 +97,5 @@ main.
 	*> Decrypt the string.
 	Call 'DECRYPT' using user-input(1:str-size), BY CONTENT alphabet-record.
 	display "Decrypted " user-input(1:str-size).
-	
-	
 
 STOP RUN.

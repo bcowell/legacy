@@ -6,7 +6,7 @@ DATA DIVISION.
 	01 i pic 9999 value 1.
 	01 j pic 99 value 1.
 
-	01 pos pic 99 value 1.
+	01 pos pic 99 value 0.
 	01 num pic 99 value 1.
 
 	01 temp-char pic X.
@@ -31,7 +31,6 @@ Decode.
 
 	*> Count how many characters are infront of the letter in the cipher-table row.
 	inspect row(pos) tallying num for characters before temp-char.
-	add 1 to num.
 
 	*> Replace the letter with whatever position the encrypted letter is at.
 	evaluate num
