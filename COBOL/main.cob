@@ -9,16 +9,25 @@ PROGRAM-ID. MAIN.
 DATA DIVISION.
 	WORKING-STORAGE SECTION.
 	*> Loop iterators
-	01 i pic 99 value 2.
-	01 j pic 99 value 1.
+	01 i 	pic 99	value 2.
+	01 j	pic 99	value 1.
 	
 	*> Data-structure - 26 rows each with 26 letters
 	01 alphabet-record. 
-    		03 row occurs 26 times.
-			05 alpha pic X occurs 26 times.
+    		03 row				occurs 26 times.
+			05 alpha	pic X	occurs 26 times.
 
-	01 temp-str pic x(26) value spaces.
-	01 user-input pic x(1000).
+	01 temp-str		pic x(26)	value spaces.
+	01 user-input 	pic x(1000).
+	01 str-size 		pic 9999.
+	
+	*> Variables for removing spaces.
+	01 VOUT     PIC X(1000).
+	01 VWORK    PIC X(1000).
+	01 VTEMP    PIC X(1000).
+	01 p1 		pic 9999.
+	01 p2		pic 9999.
+
 	
 PROCEDURE DIVISION.
 *> Create a table of each shifted alphabet.
@@ -38,23 +47,54 @@ init-table.
 		move temp-str to row(i)
 		Add 1 to i
 	end-perform.
-	
+
+*> Remove spaces for a string.
+*> source: http://www.tek-tips.com/viewthread.cfm?qid=858815 - Frederico Fonseca
+UNSTRING1.
+	MOVE 1 TO P1 P2.
+           
+	PERFORM UNTIL P1 > 1000
+		MOVE SPACES TO VOUT VTEMP
+           
+		PERFORM UNTIL P1 > 1000
+			UNSTRING VWORK DELIMITED BY ALL SPACES
+				INTO VTEMP
+			POINTER P1
+			*> IF VTEMP NOT = SPACES
+			STRING VTEMP DELIMITED BY SPACES
+				INTO VOUT
+			POINTER P2
+			*> END-IF
+		END-PERFORM
+	END-PERFORM.
+	*> Vout now holds the string sans spaces.
+	move vout to user-input.
+
 *> Read in user input, encrypt, decrypt, and display output.
 main.
 	*> Read the paragraph to encode from a file.
 	accept user-input from console.
 	
 	*> Trim the spaces.
-	inspect user-input converting spaces to "*".	
-
-	display "User input " user-input.
+	move user-input to vwork.
+	perform unstring1.
+	
+	*> User-input is still 1000 chars long, so we need to cut the right-trailing nulls.
+	unstring user-input
+	delimited by all spaces
+	into user-input count in str-size.
+	
+	*> Now we can call encrypt/decrypt with the properly sized string.
+	display "User input " user-input(1:str-size).
 
 	*> Encrypt the string.
-	CALL 'ENCRYPT' using user-input, BY CONTENT alphabet-record.
-	display "Encrypted " user-input.	
+	CALL 'ENCRYPT' using user-input(1:str-size), BY CONTENT alphabet-record.
+	display "Encrypted " user-input(1:str-size).	
 
 	*> Decrypt the string.
-	Call 'DECRYPT' using user-input, BY CONTENT alphabet-record.
-	display "Decrypted " user-input.
+	Call 'DECRYPT' using user-input(1:str-size), BY CONTENT alphabet-record.
+	display "Decrypted " user-input(1:str-size).
+	
+	
 
 STOP RUN.
