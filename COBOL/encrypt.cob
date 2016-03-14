@@ -2,12 +2,13 @@
 *> Monday, Mar. 7th, 2016
 *> Trimethius Cipher.
 *> Encrypt "Function"
+*> Compilation Instructions in Reflection Doc!
 
-IDENTIFICATION DIVISION.
-PROGRAM-ID. ENCRYPT.
+identification division.
+program-id. encrypt.
 
-DATA DIVISION.
-	WORKING-STORAGE SECTION.
+data division.
+	working-storage section.
 	*> Loop iterators
 	01 i pic 9999 value 1.
 	01 j pic 99 value 1.
@@ -15,19 +16,19 @@ DATA DIVISION.
 	01 pos pic 99 value 0.
 	01 num pic 99 value 1.
 
-	01 temp-char pic X.
+	01 temp-char pic x.
 
-	LINKAGE SECTION.
+	linkage section.
 	01 input-text pic x(1000).
 
 	01 alphabet-record.
                 03 row occurs 26 times.
-                        05 alpha pic X occurs 26 times.
+                        05 alpha pic x occurs 26 times.
 
-PROCEDURE DIVISION USING input-text, alphabet-record.
+procedure division using input-text, alphabet-record.
 
 *> Use the characters position in the input-string to find what it encodes to in the cipher-table.
-Encode.
+encode.
 	move 1 to num.
 	*> Go through each row of shifted letters.
 	if pos is not equal to 26 then
@@ -69,16 +70,16 @@ Encode.
 	add 1 to pos.
 
 *> Read each character one at a time calling encode for the string.
-Main.
+translate.
 	move 1 to i.
 	
 	perform until i > 1000
 		if input-text(i:1) is alphabetic then
 			move input-text(i:1) to temp-char
-			perform Encode
+			perform encode
 			move temp-char to input-text(i:1)
 		end-if
 		add 1 to i
 	end-perform.
 
-EXIT PROGRAM.
+exit program.

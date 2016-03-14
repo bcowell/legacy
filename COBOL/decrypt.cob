@@ -1,27 +1,33 @@
-IDENTIFICATION DIVISION.
-PROGRAM-ID. DECRYPT.
+*> Brayden Cowell - 0844864
+*> Monday, Mar. 7th, 2016
+*> Trimethius Cipher.
+*> Decrypt "Function"
+*> Compilation Instructions in Reflection Doc!
 
-DATA DIVISION.
-	WORKING-STORAGE SECTION.
+identification division.
+program-id. decrypt.
+
+data division.
+	working-storage section.
 	01 i pic 9999 value 1.
 	01 j pic 99 value 1.
 
 	01 pos pic 99 value 0.
 	01 num pic 99 value 1.
 
-	01 temp-char pic X.
+	01 temp-char pic x.
 
-	LINKAGE SECTION.
+	linkage section.
 	01 input-text pic x(1000).
 
 	01 alphabet-record.
                 03 row occurs 26 times.
-                        05 alpha pic X occurs 26 times.
+                        05 alpha pic x occurs 26 times.
 
-PROCEDURE DIVISION USING input-text, alphabet-record.
+procedure division using input-text, alphabet-record.
 *> Opposite of encode.
 *> Use the encrypted characters position in the cipher table to find what it decodes to.
-Decode.
+decode.
 	move 1 to num.
 	
 	*> Go through each row of shifted letters.
@@ -65,16 +71,16 @@ Decode.
 	add 1 to pos.
 
 *> Read each character one at a time calling decode for the string.
-Main.
+translate.
         move 1 to i.
 
         perform until i > 1000
                 if input-text(i:1) is alphabetic then
                         move input-text(i:1) to temp-char
-                        perform Decode
+                        perform decode
                         move temp-char to input-text(i:1)
                 end-if
                 add 1 to i
         end-perform.
 
-EXIT PROGRAM.
+exit program.
