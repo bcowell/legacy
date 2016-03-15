@@ -17,27 +17,28 @@ file-control.
 data division.
 file section.
     fd file-name.
-    01 in-str   	pic x(1000).
+    01 in-str		pic x(1000).
 
 working-storage section.
     *> File stuff.
     01 in-file-status		pic xx.
-    01 end-of-file-switch	pic xxx value 'no '.
-		88 end-of-file		value 'yes'.
-	77 lf					pic x(01) value x'0A'.
-	77 cr					pic x(01) value x'0D'.
-	77 crlf					pic x(02) value x'0D0A'.
+	77 lf					pic x(01) 	value x'0A'.
+	77 cr					pic x(01) 	value x'0D'.
+	77 crlf					pic x(02) 	value x'0D0A'.
+    01 end-of-file-switch	pic xxx 	value 'no '.
+		88 end-of-file					value 'yes'.
     
     *> Loop iterators
-    01 i    pic 99  value 2.
-    01 j    pic 99  value 1.
+    01 i    pic 99  	value 2.
+    01 j    pic 99  	value 1.
     
     *> Data-structure - 26 rows each with 26 letters
     01 alphabet-record. 
-            03 row              occurs 26 times.
-            05 alpha    pic x   occurs 26 times.
-
-    01 temp-str     pic x(26)   value spaces.
+            03 row              	occurs 26 times.
+            05 alpha    pic x   	occurs 26 times.
+	
+	*> String stuff
+    01 temp-str     	pic x(26)   value spaces.
     01 user-input       pic x(20).
     01 str-size         pic 9999.
     
@@ -50,8 +51,7 @@ working-storage section.
 
     
 procedure division.
-
-*> Create a table of each shifted alphabet.
+*> Create the Trimethius Cipher table of each shifted alphabet.
 init-table.
     *> Initialize the first row.
     move "abcdefghijklmnopqrstuvwxyz" to row(1).
@@ -93,13 +93,14 @@ unstring1.
     move vout to in-str.
 
 
-*> Read in user input, encrypt, decrypt, and display output.
+*> Read in user-input, encrypt, decrypt, and display output.
 translate.
-    *> Read the paragraph to encode from a file.
+    *> Ask the user for filename
     display "Enter an input filename:".
     accept user-input from console.
 
     display "Opening " user-input.
+    *> Read the lines from file.
     open input file-name.
 	
 	if in-file-status not = '00'
@@ -117,11 +118,11 @@ translate.
     *> Change any Upper-case letters to lower-case.
     inspect in-str converting "ABCDEFGHIJKLMNOPQRSTUVWXYZ" to "abcdefghijklmnopqrstuvwxyz".
     
-    *> Trim the spaces.
+    *> Trim the spaces inbetween words.
     move in-str to vwork.
     perform unstring1.
     
-    *> User-input is still 1000 chars long, so we need to cut the right-trailing nulls.
+    *> User-input is still 1000 chars long, so we need to cut the right-trailing spaces.
     unstring in-str delimited by all spaces
     into in-str
     count in str-size

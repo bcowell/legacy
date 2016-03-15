@@ -13,6 +13,7 @@ data division.
 	01 i pic 9999 value 1.
 	01 j pic 99 value 1.
 
+	*> Positions
 	01 pos pic 99 value 0.
 	01 num pic 99 value 1.
 
