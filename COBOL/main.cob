@@ -10,17 +10,21 @@ program-id. cipher.
 environment division.
 input-output section.
 file-control.
-    select file-name assign to dynamic user-input.
+    select file-name 
+    assign to dynamic user-input
+    file status is in-file-status.
 
 data division.
 file section.
     fd file-name.
-    01 in-str   pic x(1000).
+    01 in-str   	pic x(1000).
 
 working-storage section.
     *> File stuff.
-    01 file-status  pic 99.
-
+    01 in-file-status		pic xx.
+    01 end-of-file-switch	pic xxx value 'no '.
+		88 end-of-file		value 'yes'.
+    
     *> Loop iterators
     01 i    pic 99  value 2.
     01 j    pic 99  value 1.
@@ -94,10 +98,17 @@ translate.
 
     display "Opening " user-input.
     open input file-name.
-
-    read file-name 
-        into in-str
-    end-read.
+	
+	if in-file-status not = '00'
+		display "File read error " in-file-status
+		perform exit-program
+	end-if.
+	
+	perform until end-of-file
+		read file-name into in-str
+			at end set end-of-file to true
+		end-read
+	end-perform.
 
     close file-name.
     
@@ -123,4 +134,6 @@ translate.
     call 'decrypt' using in-str(1:str-size), by content alphabet-record.
     display "Decrypted " in-str(1:str-size).
 
-stop run.
+exit-program.
+	close file-name
+	stop run.
