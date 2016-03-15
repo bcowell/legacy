@@ -100,7 +100,8 @@ translate.
     open input file-name.
 	
 	if in-file-status not = '00'
-		display "File read error " in-file-status
+		display "Cannot read file! Error: " in-file-status "!"
+		display "Exiting."
 		perform exit-program
 	end-if.
 	
@@ -109,8 +110,6 @@ translate.
 			at end set end-of-file to true
 		end-read
 	end-perform.
-
-    close file-name.
     
     *> Change any Upper-case letters to lower-case.
     inspect in-str converting "ABCDEFGHIJKLMNOPQRSTUVWXYZ" to "abcdefghijklmnopqrstuvwxyz".
