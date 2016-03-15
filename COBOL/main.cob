@@ -24,6 +24,9 @@ working-storage section.
     01 in-file-status		pic xx.
     01 end-of-file-switch	pic xxx value 'no '.
 		88 end-of-file		value 'yes'.
+	77 lf					pic x(01) value x'0A'.
+	77 cr					pic x(01) value x'0D'.
+	77 crlf					pic x(02) value x'0D0A'.
     
     *> Loop iterators
     01 i    pic 99  value 2.
@@ -76,7 +79,7 @@ unstring1.
         move spaces to vout vtemp
            
         perform until p1 > 1000
-            unstring vwork delimited by all spaces
+            unstring vwork delimited by all spaces or lf or cr or crlf
                 into vtemp
             pointer p1
             *> If vtemp not = spaces
@@ -119,9 +122,10 @@ translate.
     perform unstring1.
     
     *> User-input is still 1000 chars long, so we need to cut the right-trailing nulls.
-    unstring in-str
-    delimited by all spaces
-    into in-str count in str-size.
+    unstring in-str delimited by all spaces
+    into in-str
+    count in str-size
+    end-unstring.
     
     *> Now we can call encrypt/decrypt with the properly sized string.
 
