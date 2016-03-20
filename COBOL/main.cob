@@ -17,7 +17,7 @@ file-control.
 data division.
 file section.
     fd file-name.
-    01 in-str		pic x(1000).
+    01 in-str		pic x(2000).
 
 working-storage section.
     *> File stuff.
@@ -43,9 +43,9 @@ working-storage section.
     01 str-size         pic 9999.
     
     *> Variables for removing spaces.
-    01 vout     pic x(1000).
-    01 vwork    pic x(1000).
-    01 vtemp    pic x(1000).
+    01 vout     pic x(2000).
+    01 vwork    pic x(2000).
+    01 vtemp    pic x(2000).
     01 p1       pic 9999.
     01 p2       pic 9999.
 
@@ -75,11 +75,15 @@ init-table.
 unstring1.
     move 1 to p1 p2.
            
-    perform until p1 > 1000
+    perform until p1 > 2000
         move spaces to vout vtemp
            
-        perform until p1 > 1000
-            unstring vwork delimited by all spaces or lf or cr or crlf
+        perform until p1 > 2000
+            unstring vwork delimited by all spaces
+				*> Trim line-endings
+				or lf or cr or crlf
+				*> Trim punctuation
+				or '.' or ',' or '!' or ':' or ';' or '-' or '?' 
                 into vtemp
             pointer p1
             *> If vtemp not = spaces
@@ -122,21 +126,37 @@ translate.
     move in-str to vwork.
     perform unstring1.
     
-    *> User-input is still 1000 chars long, so we need to cut the right-trailing spaces.
+    *> User-input is still 2000 chars long, so we need to cut the right-trailing spaces.
     unstring in-str delimited by all spaces
     into in-str
     count in str-size
     end-unstring.
     
+	display " ".
+    display "Text: " in-str(1:str-size).
+    
     *> Now we can call encrypt/decrypt with the properly sized string.
-
-    *> Encrypt the string.
-    call 'encrypt' using in-str(1:str-size), by content alphabet-record.
-    display "Encrypted " in-str(1:str-size).    
-
-    *> Decrypt the string.
-    call 'decrypt' using in-str(1:str-size), by content alphabet-record.
-    display "Decrypted " in-str(1:str-size).
+	perform forever
+		display " "
+		display "Would you like to encipher or decipher? Enter e or d (q to quit)."
+		accept user-input from console
+		
+		if (user-input equals "q") then
+			perform exit-program
+		end-if
+		
+		*> Encrypt the string
+		if (user-input equals "e") then
+			call 'encrypt' using in-str(1:str-size), by content alphabet-record
+			display "Encrypted " in-str(1:str-size)
+		end-if
+		
+		*> Decrypt the string
+		if (user-input equals "d") then
+			call 'decrypt' using in-str(1:str-size), by content alphabet-record
+			display "Decrypted " in-str(1:str-size)
+		end-if
+	end-perform.
 
 exit-program.
 	close file-name

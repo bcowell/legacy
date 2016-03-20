@@ -20,7 +20,7 @@ data division.
 	01 temp-char pic x.
 
 	linkage section.
-	01 input-text pic x(1000).
+	01 input-text pic x(2000).
 
 	01 alphabet-record.
                 03 row occurs 26 times.
@@ -74,7 +74,7 @@ encode.
 translate.
 	move 1 to i.
 	
-	perform until i > 1000
+	perform until i > 2000
 		if input-text(i:1) is alphabetic then
 			move input-text(i:1) to temp-char
 			perform encode
