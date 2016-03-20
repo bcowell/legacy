@@ -27,7 +27,8 @@ working-storage section.
 	77 crlf					pic x(02) 	value x'0D0A'.
     01 end-of-file-switch	pic xxx 	value 'no '.
 		88 end-of-file					value 'yes'.
-    
+    88 infinity							value 'no'.
+ 
     *> Loop iterators
     01 i    pic 99  	value 2.
     01 j    pic 99  	value 1.
@@ -136,23 +137,23 @@ translate.
     display "Text: " in-str(1:str-size).
     
     *> Now we can call encrypt/decrypt with the properly sized string.
-	perform forever
-		display " "
+	perform until infinity
+		display "  "
 		display "Would you like to encipher or decipher? Enter e or d (q to quit)."
 		accept user-input from console
 		
-		if (user-input equals "q") then
+		if (user-input is equal to "q") then
 			perform exit-program
 		end-if
 		
 		*> Encrypt the string
-		if (user-input equals "e") then
+		if (user-input is equal to "e") then
 			call 'encrypt' using in-str(1:str-size), by content alphabet-record
 			display "Encrypted " in-str(1:str-size)
 		end-if
 		
 		*> Decrypt the string
-		if (user-input equals "d") then
+		if (user-input is equal to "d") then
 			call 'decrypt' using in-str(1:str-size), by content alphabet-record
 			display "Decrypted " in-str(1:str-size)
 		end-if
