@@ -34,9 +34,7 @@ begin
 	Main_Game_Loop:
 	loop
 		begin
-			
-			print_board(board);
-			
+			print_board (board);	
 			player_control := FALSE;
 			valid_move := FALSE;
 			
@@ -63,15 +61,17 @@ begin
 				if ((current_place in 1..9) and (next_place in 1..9)) then -- Input is valid
 					-- Now check if move is valid
 					player_control := TRUE;
-					
-					
-					
+					place(current_place, next_place, board, player_control, valid_move);
 				else
 					put_line("Wrong input. Try number,number!");
 				end if;
+				
+				exit when valid_move;
 			end loop Player_Move;
 			
 			-- Check if game is won.
+			
+			print_board(board);
 			
 			-- Computer's turn to move
 			Computer_Move:

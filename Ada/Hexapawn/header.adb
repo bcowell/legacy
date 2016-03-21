@@ -3,7 +3,7 @@
 -- Hexapawn implemented in Ada
 
 With Ada.Text_IO; use Ada.Text_IO;
-With Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
+-- With Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 
 package body header is
 	
@@ -81,11 +81,62 @@ package body header is
 	--------------------------------------------------------------------
 	
 	
+	 -------------------------------------------------------------------
+        -- If the user wants to move diagonally. 
+        --  Make sure that the supplied move is possible.
+        --------------------------------------------------------------------
+        function check_diag (x : Integer; y : Integer; board : board_type; player_control : Boolean) return Boolean is
+                curr_char, next_char : Character;
+                current, next : pos_t;
+        begin
+                get_pos(x,y,current,next);
+
+                curr_char := board(current.row, current.col); -- Character in the current pos.
+                next_char := board(next.row, next.col); -- Character in the next pos.
+
+                -- Make sure you are trying to move your own pawn
+                if (player_control) then
+                        if (curr_char /= 'O') then
+                                return FALSE;
+                        end if;
+			
+			if (((next.col /= current.col + 1) and (next.row /= current.row - 1)) or
+                       	    ((next.col /= current.col - 1) and (next.row /= current.row - 1)))
+                        then
+                                return FALSE;
+                        end if;
+
+			if (next_char /= 'X') then
+				return FALSE;
+			end if;
+
+		else -- Computer controlled.
+			if (curr_char /= 'X') then
+                                return FALSE;
+                   	end if;
+
+                        if (((next.col /= current.col - 1) and (next.row /= current.row + 1)) or
+			    ((next.col /= current.col + 1) and (next.row /= current.row + 1)))
+			then
+                                return FALSE;
+                        end if;
+
+                        -- Have to take player's piece.
+                        if (next_char /= 'O') then
+                                return FALSE;
+                        end if;
+		end if;
+		return TRUE;
+	end check_diag;
 	--------------------------------------------------------------------
-	-- Make sure that the supplied move is possible.
+	
+
+	--------------------------------------------------------------------
+	-- If the user wants to move forward.
+	--  Make sure that the supplied move is possible.
 	--------------------------------------------------------------------
 	function check_forward (x : Integer; y : Integer; board : board_type; player_control : Boolean) return Boolean is
-		curr_char, next_char, temp_char : Character;
+		curr_char, next_char : Character;
 		current, next : pos_t; 
 	begin
 		get_pos(x,y,current,next);
@@ -98,27 +149,32 @@ package body header is
 			if (curr_char /= 'O') then
 				return FALSE;
 			end if;
-	
-			-- Check if vertical upward is empty
-			temp_char := board(current.row, current.col + 1);
-			if (temp_char = '.')
-				return TRUE;
+			
+			-- Check if user is moving one space up.
+			if ((next.col /= current.col) and (next.row /= current.row + 1)) then
+                                return FALSE;
 			end if;
 			
+			if (next_char /= '.') then
+				return FALSE;
+			end if;
+				
 		else -- computer control
 			if (curr_char /= 'X') then
 				return FALSE;
 			end if;
 			
+			if ((next.col /= current.col) and (next.row /= current.row + 1)) then
+				return FALSE;
+			end if;
+			
 			-- Check if vertical downward is empty
-			temp_char := board(current.row, current.col - 1);
-			if (temp_char = '.')
-				return TRUE;
+			if (next_char /= '.') then
+				return FALSE;
 			end if;
 		end if;
-		
 		return TRUE;
-	end check;
+	end check_forward;
 	--------------------------------------------------------------------
 
 
@@ -128,33 +184,27 @@ package body header is
 	-- If Player controlled (diff of rdiag = 2, forward = 3, ldiag = 4)
 	-- If Computer controlled (diff of ldiag = 2, forward = 3, rdiag = 4)
 	--------------------------------------------------------------------
-	procedure place (x, y : in Integer; board : in out board_type; player_control : in Boolean) is
+	procedure place (x, y : in Integer; board : in out board_type; player_control : in Boolean; valid_move : out Boolean) is
 	begin
-	
-		if (abs(current_place - next_place) = 3) then -- Forward
-			valid_move := check_forward(current_place, next_place, board, player_control);
+		valid_move := FALSE;
+
+		if (abs(x - y) = 3) then -- Forward
+			valid_move := check_forward(x, y, board, player_control);
 			
 			if (valid_move) then
-				-- The move is valid!
-				move (current_place, next_place, board);
-				exit;
+				move (x, y, board);
 			else
 				put_line("You cannot move that piece forward!");
 			end if;
 			
-		elsif (abs(current_place - next_place) = 2) then -- Right-Diagonal
-			valid_move := check
+		elsif ((abs(x - y) = 2) or (abs(x - y) = 4)) then -- Right or Left diagonal
+			valid_move := check_diag(x, y, board, player_control);
 			
 			if (valid_move) then
-				-- The move is valid!
-				move (current_place, next_place, board);
-				exit;
+				move (x, y, board);
 			else
 				put_line("You cannot move that piece there!");
 			end if;
-			
-		elsif (abs(current_place - next_place) = 4) then -- Left-Diagonal
-		
 		end if;
 	end place;
 	--------------------------------------------------------------------
