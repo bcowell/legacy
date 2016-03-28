@@ -8,10 +8,32 @@ With Ada.Text_IO; use Ada.Text_IO;
 package body header is
 	
 	--------------------------------------------------------------------
+        -- Check whether the game has been won.
+        -- Any of the 3 ways defined in the spec.
+        --------------------------------------------------------------------
+        function Win_State (board : in board_type) return Boolean is
+        begin
+                -- One of either player's pieces made it to the back row of their opponent.
+
+                -- All of either player's pieces are taken.
+		for i in board'range loop
+			put_line("hi");
+		end loop;
+		
+                -- There are no moves available for either player.
+	
+
+		-- If no win_state is found return FALSE.
+		return FALSE;
+        end Win_State;
+        --------------------------------------------------------------------
+
+
+	--------------------------------------------------------------------
 	-- Print the current board in specified format.
 	--------------------------------------------------------------------
 	procedure Print_Board (board : in board_type) is
-    begin
+   	begin
 		new_line;
 		put_line(board(1,1) & " " & board(1,2) & " " & board(1,3));
 		put_line(board(2,1) & " " & board(2,2) & " " & board(2,3));
@@ -44,6 +66,7 @@ package body header is
 	end Show_Instructions;
 	--------------------------------------------------------------------
 	
+
 	--------------------------------------------------------------------
 	-- Get the x and y position of both the current and next move.
 	--------------------------------------------------------------------
@@ -83,7 +106,7 @@ package body header is
 	
 	 -------------------------------------------------------------------
         -- If the user wants to move diagonally. 
-        --  Make sure that the supplied move is possible.
+        -- Make sure that the supplied move is possible.
         --------------------------------------------------------------------
         function check_diag (x : Integer; y : Integer; board : board_type; player_control : Boolean) return Boolean is
                 curr_char, next_char : Character;
@@ -133,7 +156,7 @@ package body header is
 
 	--------------------------------------------------------------------
 	-- If the user wants to move forward.
-	--  Make sure that the supplied move is possible.
+	-- Make sure that the supplied move is possible.
 	--------------------------------------------------------------------
 	function check_forward (x : Integer; y : Integer; board : board_type; player_control : Boolean) return Boolean is
 		curr_char, next_char : Character;
@@ -207,16 +230,6 @@ package body header is
 			end if;
 		end if;
 	end place;
-	--------------------------------------------------------------------
-	
-	
-	--------------------------------------------------------------------
-	-- Print the instructions to Hexapawn.
-	--------------------------------------------------------------------
-	--procedure Win_State (board : in board_type) is
-	--begin
-	
-	--end Win_State;
 	--------------------------------------------------------------------
 	
 end header;

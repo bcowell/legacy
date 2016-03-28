@@ -12,7 +12,7 @@ procedure Main is
 	
 	current_place, next_place : Integer := 0;
 	
-	valid_move, player_control : Boolean := FALSE;
+	valid_move, player_control, game_won : Boolean := FALSE;
 	
 	user_input : String (1..50);
 	last : natural;
@@ -70,7 +70,8 @@ begin
 			end loop Player_Move;
 			
 			-- Check if game is won.
-			
+			game_won := win_state(board);			
+
 			print_board(board);
 			
 			-- Computer's turn to move
@@ -86,6 +87,8 @@ begin
 			end loop Computer_Move;
 			
 			-- Check if game is won.
+			game_won := win_state(board);
+
 		exception
 			when Game_Over =>
 				put_line("Game over!");
