@@ -12,14 +12,54 @@ package body header is
         -- Any of the 3 ways defined in the spec.
         --------------------------------------------------------------------
         function Win_State (board : in board_type) return Boolean is
+		x_count, o_count : Integer := 0;
         begin
                 -- One of either player's pieces made it to the back row of their opponent.
 
                 -- All of either player's pieces are taken.
-		for i in board'range loop
-			put_line("hi");
+
+		-- Go through each spot in the 3x3 board
+		for i in board'range(1) loop
+			for j in board'range(2) loop
+				-- Player has a pawn on computer's end of the board.
+				if (i = 1) then
+					if (board(i,j) = 'O') then
+						put_line("You have reached the computer's side of the board.");
+						return TRUE;
+					end if;	
+				-- Computer has a pawn on player's end of the board.	
+				elsif (i = 3) then
+					if (board(i,j) = 'X') then
+						put_line("Computer has reached your side of the board.");
+						return TRUE;
+					end if;
+			 	end if;	
+	
+				-- Count both sets of pawns
+				if (board(i,j) = 'X') then
+					x_count := x_count + 1;
+				elsif (board(i,j) = 'O') then
+					o_count := o_count + 1;
+				end if;
+			
+				-- Brute force the amount of possible moves from current position
+				for x in board'range(1) loop
+					for y in board'range(2) loop
+					
+ 					end loop;
+				end loop;
+	
+			end loop;
 		end loop;
 		
+		if (x_count = 0) then
+			put_line("Computer has no more pieces.");
+			return TRUE;
+		elsif (o_count = 0) then
+			put_line("Player has no more pieces.");
+			return TRUE;
+		end if;
+
                 -- There are no moves available for either player.
 	
 
