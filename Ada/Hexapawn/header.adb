@@ -3,7 +3,7 @@
 -- Hexapawn implemented in Ada
 
 With Ada.Text_IO; use Ada.Text_IO;
-With Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
+-- With Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 
 package body header is
 	
@@ -69,7 +69,7 @@ package body header is
 			move (pos, next, board);
 			return;
 		end if;
-		pos := pos + 1; 
+		pos := pos + 1;
             end loop;
 	end loop;
     end computer_turn;
@@ -237,20 +237,10 @@ package body header is
 		if (player_control) then
 			if (curr_char /= 'O') then
 				return FALSE;
-			end if;
-			
-			new_line;
-			put(next.col);
-			new_line;
-			put(current.col);
-			new_line;
-			put(next.row);
-			new_line;
-			put(current.row - 1);
-			new_line;			
+			end if;			
 
 			-- Check if user is moving one space up.
-			if ((next.col /= current.col) and (next.row /= current.row - 1)) then
+			if ((next.col = current.col) and (next.row /= current.row - 1)) then
                                 return FALSE;
 			end if;
 			
@@ -263,7 +253,7 @@ package body header is
 				return FALSE;
 			end if;
 			
-			if ((next.col /= current.col) and (next.row /= current.row + 1)) then
+			if ((next.col = current.col) and (next.row /= current.row + 1)) then
 				return FALSE;
 			end if;
 			
