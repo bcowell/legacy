@@ -62,8 +62,9 @@ begin
 					-- Now check if move is valid
 					player_control := TRUE;
 					place(current_place, next_place, board, player_control, valid_move);
-                    if (valid_move) then
-				        move (current_place, next_place, board);
+                    			if (valid_move) then
+				        	move (current_place, next_place, board);
+					end if;
 				else
 					put_line("Wrong input. Try number,number!");
 				end if;
@@ -75,20 +76,17 @@ begin
 			game_won := win_state(board, player_control);			
             if (game_won) then 
                 put_line("Player Wins!");
-                raise exception Game_Over;
+                raise Game_Over;
             end if;
 			print_board(board);
 			
 			-- Computer's turn to move
-            player_control := FALSE;
+        		player_control := FALSE;
 			Computer_Move:
 			loop
-				-- All positions encountered by the program and acceptable moves from them are stored in an array.
-				-- When the program encounters an unfamiliar position, the position and all legal moves for it are added to the list.
-				-- If the program loses a game, it erases the move that lef to defeat.
-				-- If it hits a position from which all moves have been deleted (they all lead to defeat), it erases the move that got it there and resigns.
-				put_line("Computer move");
-				new_line;
+				put_line("Computer's move.");
+				-- Computer's AI
+				Computer_turn(board);
 				exit;
 			end loop Computer_Move;
 			
@@ -96,7 +94,7 @@ begin
 			game_won := win_state(board, player_control);
             if (game_won) then 
                 put_line("Computer Wins!");
-                raise exception Game_Over;
+                raise Game_Over;
             end if;
             
 		exception

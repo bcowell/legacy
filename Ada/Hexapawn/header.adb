@@ -3,102 +3,110 @@
 -- Hexapawn implemented in Ada
 
 With Ada.Text_IO; use Ada.Text_IO;
--- With Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
+--With Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 
 package body header is
 	
-	--------------------------------------------------------------------
+    --------------------------------------------------------------------
     -- Check whether the game has been won.
     -- Any of the 3 ways defined in the spec.
     --------------------------------------------------------------------
-    function Win_State (board : in board_type, player_control : in Boolean) return Boolean is
-        x_count, o_count, num_valid_moves : Integer := 0;
+    function Win_State (board : in board_type; player_control : in Boolean) return Boolean is
+        num_valid_moves, next : Integer := 0;
         pos : Integer := 1;
     begin
-    -- Go through each spot in the 3x3 board
-    for i in board'range(1) loop
-        for j in board'range(2) loop
-            -- One of either player's pieces made it to the back row of their opponent.
-            -- Player has a pawn on computer's end of the board.
-            if (i = 1) then
-                if (board(i,j) = 'O') then
-                    put_line("You have reached the computer's side of the board.");
-                    return TRUE;
-                end if;	
-            -- Computer has a pawn on player's end of the board.	
-            elsif (i = 3) then
-                if (board(i,j) = 'X') then
-                    put_line("Computer has reached your side of the board.");
-                    return TRUE;
-                end if;
-            end if;	
+   	-- Go through each spot in the 3x3 board
+    	for i in board'range(1) loop
+        	for j in board'range(2) loop
 
-            -- Count both sets of pawns
-            if (board(i,j) = 'X') then
-                x_count := x_count + 1;
-            elsif (board(i,j) = 'O') then
-                o_count := o_count + 1;
-            end if;
+            	    if (i = 1) then
+			-- Player reached Computer's end.
+                	if (board(i,j) = 'O') then
+                    		return TRUE;
+                	end if;	
+            	    -- Computer has a pawn on player's end of the board.	
+            	    elsif (i = 3) then
+                	if (board(i,j) = 'X') then
+                   	 	return TRUE;
+                	end if;
+            	    end if;	
 
-            -- There are no moves available for either player.
-            num_valid_moves := check_moves(board, pos, player_control);
-            if (num_valid_moves < 1) then  
-                return TRUE;
-            end if;
+            	    -- There are no moves available for either player.
+            	    check_moves(board, pos, player_control, num_valid_moves, next);
+		
+            	    if (num_valid_moves > 0) then  
+                	return FALSE;
+            	    end if;
             
-            pos := pos + 1;
-        end loop;
-    end loop;
-    
-    -- All of either player's pieces are taken.
-    if (x_count = 0) then
-        put_line("Computer has no more pieces.");
-        return TRUE;
-    elsif (o_count = 0) then
-        put_line("Player has no more pieces.");
-        return TRUE;
-    end if;
-    
-    -- If no win_state is found return FALSE.
-    return FALSE;
+            	    pos := pos + 1;
+        	end loop;
+    	end loop;
+
+	if (num_valid_moves < 1) then
+		return TRUE;
+	end if;
+
+    	return FALSE;
     end Win_State;
     --------------------------------------------------------------------
-    
+
+
+    --------------------------------------------------------------------
+    -- Computer loops through available moves and chooses one.
+    -- Prioritize move if it results in a win.
+    --------------------------------------------------------------------
+    procedure Computer_turn (board : in out board_type) is 
+	num_valid_moves, next : Integer := 0;
+	pos : Integer := 1;
+	player_control : Boolean;
+    begin
+	player_control := FALSE;
+        for i in board'range(1) loop
+	    for j in board'range(2) loop
+                check_moves (board, pos, player_control, num_valid_moves, next);
+		if (num_valid_moves > 0) then
+			put_line(Integer'Image(pos) & "," & Integer'Image(next));
+			move (pos, next, board);
+			return;
+		end if;
+		pos := pos + 1; 
+            end loop;
+	end loop;
+    end computer_turn;
+    --------------------------------------------------------------------
 
     --------------------------------------------------------------------
     -- Count the amount of possible moves for the player / computer
     --------------------------------------------------------------------
-    function check_moves (board : in board_type; current : in Integer; player_control : in Boolean) return Integer is
+    procedure check_moves (board : in board_type; current : in Integer; player_control : in Boolean; num_valid_moves, next : out Integer) is
         valid_move : Boolean := FALSE;
-        num_valid_moves : Integer := 0;
     begin
+	num_valid_moves := 0;
         -- Brute force the amount of possible moves from current position
         for i in 1..9 loop
-                place(current, i, board, player_control, valid_move);
-                    
+                place(current, i, board, player_control, valid_move);    
                 if (valid_move) then
                     num_valid_moves := num_valid_moves + 1;
+		    next := i;	
                 end if;
-      
         end loop;
-        return (num_valid_moves);
     end check_moves;
     --------------------------------------------------------------------
     
     
-	--------------------------------------------------------------------
-	-- Print the current board in specified format.
-	--------------------------------------------------------------------
-	procedure Print_Board (board : in board_type) is
+    --------------------------------------------------------------------
+    -- Print the current board in specified format.
+    --------------------------------------------------------------------
+    procedure Print_Board (board : in board_type) is
    	begin
-		new_line;
-		put_line(board(1,1) & " " & board(1,2) & " " & board(1,3));
-		put_line(board(2,1) & " " & board(2,2) & " " & board(2,3));
-		put_line(board(3,1) & " " & board(3,2) & " " & board(3,3));
-		new_line;
+	    new_line;
+	    put_line(board(1,1) & " " & board(1,2) & " " & board(1,3));
+	    put_line(board(2,1) & " " & board(2,2) & " " & board(2,3));
+	    put_line(board(3,1) & " " & board(3,2) & " " & board(3,3));
+	    new_line;
 		
-	end Print_Board;
-	--------------------------------------------------------------------
+    end Print_Board;
+    --------------------------------------------------------------------
 
 
 	--------------------------------------------------------------------
@@ -232,7 +240,7 @@ package body header is
 			end if;
 			
 			-- Check if user is moving one space up.
-			if ((next.col /= current.col) and (next.row /= current.row + 1)) then
+			if ((next.col /= current.col) and (next.row /= current.row - 1)) then
                                 return FALSE;
 			end if;
 			
@@ -265,7 +273,7 @@ package body header is
 	-- If Player controlled (diff of rdiag = 2, forward = 3, ldiag = 4)
 	-- If Computer controlled (diff of ldiag = 2, forward = 3, rdiag = 4)
 	--------------------------------------------------------------------
-	procedure place (x, y : in Integer; board : in out board_type; player_control : in Boolean; valid_move : out Boolean) is
+	procedure place (x, y : in Integer; board : in board_type; player_control : in Boolean; valid_move : out Boolean) is
 	begin
 		valid_move := FALSE;
 
