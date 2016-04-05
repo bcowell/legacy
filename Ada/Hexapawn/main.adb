@@ -33,18 +33,18 @@ begin
 
 	Main_Game_Loop:
 	loop
-		begin
-			print_board (board);	
-			player_control := FALSE;
-			valid_move := FALSE;
+	begin
+		print_board (board);	
+		player_control := FALSE;
+		valid_move := FALSE;
 			
-			-- Player's turn to move.
-			Player_Move:
-			loop
-				-- clear user_input
-				user_input := (1..50 => ' ');
+		-- Player's turn to move.
+		Player_Move:
+		loop
+			-- clear user_input
+			user_input := (1..50 => ' ');
 				
-				put_line("YOUR MOVE ?");
+			put_line("YOUR MOVE ?");
 				get_line(user_input, last);
 				
 				-- Quit the game if user enters Q
@@ -74,36 +74,34 @@ begin
 			
 			-- Check if game is won.
 			game_won := win_state(board, player_control);			
-            if (game_won) then 
-                put_line("Player Wins!");
-                raise Game_Over;
-            end if;
+            		if (game_won) then 
+                		put_line("Player Wins!");
+                		raise Game_Over;
+            		end if;
+
 			print_board(board);
-			
-			-- Computer's turn to move
+
         		player_control := FALSE;
-			Computer_Move:
-			loop
-				put_line("Computer's move.");
-				-- Computer's AI
-				Computer_turn(board);
-				exit;
-			end loop Computer_Move;
+			put_line("Computer's move.");
+			-- Computer's AI
+			Computer_turn(board);
 			
 			-- Check if game is won.
-			game_won := win_state(board, player_control);
-            if (game_won) then 
-                put_line("Computer Wins!");
-                raise Game_Over;
-            end if;
+			game_won := win_state(board, FALSE);
+            		if (game_won) then 
+                		put_line("Computer Wins!");
+                		raise Game_Over;
+            		end if;
             
-		exception
+			exception
 			when Game_Over =>
 				put_line("Game over!");
-		end;
-	end loop Main_Game_Loop;
+				print_board (board);
+				raise Exit_Program;
+			end;
+		end loop Main_Game_Loop;
 
-exception
+	exception
 	when Exit_Program =>
 		put_line("Thanks for playing!");
 end Main;
