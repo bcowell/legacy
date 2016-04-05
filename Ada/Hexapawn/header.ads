@@ -23,6 +23,7 @@ package header is
 	function check_diag (x,y : Integer; 	board : board_type; 		player_control : Boolean) return Boolean;
 	procedure move (x,y : in Integer; 	board : in out board_type);
 	procedure Get_Pos (x,y : in Integer; 	current, next : out pos_t);
-	function Win_State (board : in board_type) return Boolean;
+	function Win_State (board : in board_type, player_control : in Boolean) return Boolean;
+    function check_moves (board : in board_type; current : in Integer; player_control : in Boolean) return Integer;
 	
 end header;

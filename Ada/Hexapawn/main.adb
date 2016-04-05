@@ -70,8 +70,11 @@ begin
 			end loop Player_Move;
 			
 			-- Check if game is won.
-			game_won := win_state(board);			
-
+			game_won := win_state(board, player_control);			
+            if (game_won) then 
+                put_line("Player Wins!");
+                raise exception Game_Over;
+            end if;
 			print_board(board);
 			
 			-- Computer's turn to move
@@ -87,8 +90,12 @@ begin
 			end loop Computer_Move;
 			
 			-- Check if game is won.
-			game_won := win_state(board);
-
+			game_won := win_state(board, player_control);
+            if (game_won) then 
+                put_line("Computer Wins!");
+                raise exception Game_Over;
+            end if;
+            
 		exception
 			when Game_Over =>
 				put_line("Game over!");

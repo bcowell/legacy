@@ -8,67 +8,79 @@ With Ada.Text_IO; use Ada.Text_IO;
 package body header is
 	
 	--------------------------------------------------------------------
-        -- Check whether the game has been won.
-        -- Any of the 3 ways defined in the spec.
-        --------------------------------------------------------------------
-        function Win_State (board : in board_type) return Boolean is
-		x_count, o_count : Integer := 0;
-        begin
-                -- One of either player's pieces made it to the back row of their opponent.
+    -- Check whether the game has been won.
+    -- Any of the 3 ways defined in the spec.
+    --------------------------------------------------------------------
+    function Win_State (board : in board_type, player_control : in Boolean) return Boolean is
+        x_count, o_count, num_moves : Integer := 0;
+        pos : Integer := 1;
+    begin
+            -- One of either player's pieces made it to the back row of their opponent.
 
-                -- All of either player's pieces are taken.
+            -- All of either player's pieces are taken.
 
-		-- Go through each spot in the 3x3 board
-		for i in board'range(1) loop
-			for j in board'range(2) loop
-				-- Player has a pawn on computer's end of the board.
-				if (i = 1) then
-					if (board(i,j) = 'O') then
-						put_line("You have reached the computer's side of the board.");
-						return TRUE;
-					end if;	
-				-- Computer has a pawn on player's end of the board.	
-				elsif (i = 3) then
-					if (board(i,j) = 'X') then
-						put_line("Computer has reached your side of the board.");
-						return TRUE;
-					end if;
-			 	end if;	
-	
-				-- Count both sets of pawns
-				if (board(i,j) = 'X') then
-					x_count := x_count + 1;
-				elsif (board(i,j) = 'O') then
-					o_count := o_count + 1;
-				end if;
-			
-				-- Brute force the amount of possible moves from current position
-				for x in board'range(1) loop
-					for y in board'range(2) loop
-					
- 					end loop;
-				end loop;
-	
-			end loop;
-		end loop;
-		
-		if (x_count = 0) then
-			put_line("Computer has no more pieces.");
-			return TRUE;
-		elsif (o_count = 0) then
-			put_line("Player has no more pieces.");
-			return TRUE;
-		end if;
+    -- Go through each spot in the 3x3 board
+    for i in board'range(1) loop
+        for j in board'range(2) loop
+            -- Player has a pawn on computer's end of the board.
+            if (i = 1) then
+                if (board(i,j) = 'O') then
+                    put_line("You have reached the computer's side of the board.");
+                    return TRUE;
+                end if;	
+            -- Computer has a pawn on player's end of the board.	
+            elsif (i = 3) then
+                if (board(i,j) = 'X') then
+                    put_line("Computer has reached your side of the board.");
+                    return TRUE;
+                end if;
+            end if;	
 
-                -- There are no moves available for either player.
-	
+            -- Count both sets of pawns
+            if (board(i,j) = 'X') then
+                x_count := x_count + 1;
+            elsif (board(i,j) = 'O') then
+                o_count := o_count + 1;
+            end if;
 
-		-- If no win_state is found return FALSE.
-		return FALSE;
-        end Win_State;
-        --------------------------------------------------------------------
+            num_moves := check_moves(board, pos);
+            
+            pos := pos + 1;
+        end loop;
+    end loop;
+    
+    if (x_count = 0) then
+        put_line("Computer has no more pieces.");
+        return TRUE;
+    elsif (o_count = 0) then
+        put_line("Player has no more pieces.");
+        return TRUE;
+    end if;
+
+    -- There are no moves available for either player.
 
 
+    -- If no win_state is found return FALSE.
+    return FALSE;
+    end Win_State;
+    --------------------------------------------------------------------
+    
+
+    --------------------------------------------------------------------
+    -- Count the amount of possible moves for the player / computer
+    --------------------------------------------------------------------
+    function check_moves (board : in board_type; current : in Integer) return Integer is
+    begin
+        -- Brute force the amount of possible moves from current position
+        for x in board'range(1) loop
+            for y in board'range(2) loop
+					place()
+            end loop;
+        end loop;
+    end check_moves;
+    --------------------------------------------------------------------
+    
+    
 	--------------------------------------------------------------------
 	-- Print the current board in specified format.
 	--------------------------------------------------------------------
