@@ -62,6 +62,8 @@ begin
 					-- Now check if move is valid
 					player_control := TRUE;
 					place(current_place, next_place, board, player_control, valid_move);
+                    if (valid_move) then
+				        move (current_place, next_place, board);
 				else
 					put_line("Wrong input. Try number,number!");
 				end if;
@@ -78,6 +80,7 @@ begin
 			print_board(board);
 			
 			-- Computer's turn to move
+            player_control := FALSE;
 			Computer_Move:
 			loop
 				-- All positions encountered by the program and acceptable moves from them are stored in an array.

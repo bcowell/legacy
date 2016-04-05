@@ -12,16 +12,13 @@ package body header is
     -- Any of the 3 ways defined in the spec.
     --------------------------------------------------------------------
     function Win_State (board : in board_type, player_control : in Boolean) return Boolean is
-        x_count, o_count, num_moves : Integer := 0;
+        x_count, o_count, num_valid_moves : Integer := 0;
         pos : Integer := 1;
     begin
-            -- One of either player's pieces made it to the back row of their opponent.
-
-            -- All of either player's pieces are taken.
-
     -- Go through each spot in the 3x3 board
     for i in board'range(1) loop
         for j in board'range(2) loop
+            -- One of either player's pieces made it to the back row of their opponent.
             -- Player has a pawn on computer's end of the board.
             if (i = 1) then
                 if (board(i,j) = 'O') then
@@ -43,12 +40,17 @@ package body header is
                 o_count := o_count + 1;
             end if;
 
-            num_moves := check_moves(board, pos);
+            -- There are no moves available for either player.
+            num_valid_moves := check_moves(board, pos, player_control);
+            if (num_valid_moves < 1) then  
+                return TRUE;
+            end if;
             
             pos := pos + 1;
         end loop;
     end loop;
     
+    -- All of either player's pieces are taken.
     if (x_count = 0) then
         put_line("Computer has no more pieces.");
         return TRUE;
@@ -56,10 +58,7 @@ package body header is
         put_line("Player has no more pieces.");
         return TRUE;
     end if;
-
-    -- There are no moves available for either player.
-
-
+    
     -- If no win_state is found return FALSE.
     return FALSE;
     end Win_State;
@@ -69,14 +68,20 @@ package body header is
     --------------------------------------------------------------------
     -- Count the amount of possible moves for the player / computer
     --------------------------------------------------------------------
-    function check_moves (board : in board_type; current : in Integer) return Integer is
+    function check_moves (board : in board_type; current : in Integer; player_control : in Boolean) return Integer is
+        valid_move : Boolean := FALSE;
+        num_valid_moves : Integer := 0;
     begin
         -- Brute force the amount of possible moves from current position
-        for x in board'range(1) loop
-            for y in board'range(2) loop
-					place()
-            end loop;
+        for i in 1..9 loop
+                place(current, i, board, player_control, valid_move);
+                    
+                if (valid_move) then
+                    num_valid_moves := num_valid_moves + 1;
+                end if;
+      
         end loop;
+        return (num_valid_moves);
     end check_moves;
     --------------------------------------------------------------------
     
@@ -148,6 +153,7 @@ package body header is
 	procedure move (x : Integer; y : Integer; board : in out board_type) is
 		current, next : pos_t;
 	begin
+        -- Convert the given move into 3x3 row,col format
 		get_pos(x,y,current,next);
 		-- Update board
 		board(next.row, next.col) := board(current.row, current.col);
@@ -265,21 +271,10 @@ package body header is
 
 		if (abs(x - y) = 3) then -- Forward
 			valid_move := check_forward(x, y, board, player_control);
-			
-			if (valid_move) then
-				move (x, y, board);
-			else
-				put_line("You cannot move that piece forward!");
-			end if;
-			
+            
 		elsif ((abs(x - y) = 2) or (abs(x - y) = 4)) then -- Right or Left diagonal
 			valid_move := check_diag(x, y, board, player_control);
-			
-			if (valid_move) then
-				move (x, y, board);
-			else
-				put_line("You cannot move that piece there!");
-			end if;
+            
 		end if;
 	end place;
 	--------------------------------------------------------------------
